@@ -1,9 +1,9 @@
 terraform {
-    
-    backend "azurerm" {
-        key = "staging-cluster.tfstate"      
-    }
-  
+
+  backend "azurerm" {
+     key = "staging-vmss-cluster.tfstate"
+  }
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -14,7 +14,7 @@ terraform {
 provider "azurerm" {
   skip_provider_registration = true
 
-    features {
+  features {
     virtual_machine_scale_set {
       force_delete                  = false
       roll_instances_when_required  = true
@@ -25,15 +25,15 @@ provider "azurerm" {
 
 module "webserver-vmss" {
 
-    source = "github.com/am-55-code/TF-modules/services/webserver-cluster"
-    
-    cluster_name = "staging-cluster"
-    region = var.region
+  source = "github.com/am-55-code/TF-modules/services/webserver-cluster"
 
-    cluster_sku = var.cluster_sku
-    instance_count = "1"
+  cluster_name = "staging-cluster"
+  region       = var.region
 
-    os_disk_replication = var.os_disk_replication
-    state_file_remote_key = var.remote_key
-    storage_container_name = var.stg_container_name
+  cluster_sku    = var.cluster_sku
+  instance_count = "1"
+
+  os_disk_replication    = var.os_disk_replication
+  state_file_remote_key  = var.remote_key
+  storage_container_name = var.stg_container_name
 }
