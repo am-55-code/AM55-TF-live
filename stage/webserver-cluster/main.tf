@@ -25,7 +25,7 @@ provider "azurerm" {
 
 module "webserver-vmss" {
 
-  source = "github.com/am-55-code/TF-modules/services/webserver-cluster"
+  source = "git::https://github.com/am-55-code/TF-modules.git?ref=v0.0.1"
 
   cluster_name = "staging-cluster"
   region       = var.region

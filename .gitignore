@@ -1,7 +1,6 @@
-.terraform
-.terraform.lock.hcl
-*.tfstate
-*.tfstate.backup
+.terraform*
+.ps1
+*.tfstate*
 .pem
 .pub
 NewStorage.sh
