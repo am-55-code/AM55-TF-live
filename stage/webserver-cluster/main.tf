@@ -1,9 +1,11 @@
 terraform {
-    
-    backend "azurerm" {
-        key = "staging-cluster.tfstate"      
-    }
-  
+
+  backend "azurerm" {
+    key                  = "staging-vmss-cluster.tfstate"
+    container_name       = "tfstate"
+    storage_account_name = "tfstg055654770390"
+  }
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -14,7 +16,7 @@ terraform {
 provider "azurerm" {
   skip_provider_registration = true
 
-    features {
+  features {
     virtual_machine_scale_set {
       force_delete                  = false
       roll_instances_when_required  = true
@@ -24,23 +26,16 @@ provider "azurerm" {
 }
 
 module "webserver-vmss" {
-    source = "../../../../../04-tf-module/module-example/modules/services/webserver-cluster"
-    cluster_name = "staging-cluster"
-    region = "East US"
-    cluster_sku = "Standard_B1s"
-    instance_count = "1"
-    os_disk_replication = "Standard_LRS"
-    state_file_remote_key = "staging-vmss-cluster"
-    storage_container_name = "tfstate"
-}
+  source = "git@github.com:am-55-code/TF-modules.git//services/webserver-cluster?ref=v0.2"
 
-resource "azurerm_lb_rule" "allow_ssh_port" {
-loadbalancer_id = module.webserver-vmss
-name = "SSH Inbound"
-protocol = "tcp"
-frontend_port = 22
-backend_port = 22
-frontend_ip_configuration_name = "staging-cluster-ssh-inbound"
+  cluster_name   = "staging-cluster"
+  cluster_sku    = "Standard_B1s"
+  instance_count = "1"
+  region         = "East US"
+
+  os_disk_replication    = "Standard_LRS"
+  storage_container_name = "tfstate"
+  state_file_remote_key  = "staging-vmss-cluster.tfstate"
 
 }
 
