@@ -1,7 +1,9 @@
 terraform {
 
   backend "azurerm" {
-     key = "staging-vmss-cluster.tfstate"
+    key                  = "staging-vmss-cluster.tfstate"
+    container_name       = "tfstate"
+    storage_account_name = "tfstg055654770390"
   }
 
   required_providers {
@@ -24,16 +26,16 @@ provider "azurerm" {
 }
 
 module "webserver-vmss" {
+  source = "git@github.com:am-55-code/TF-modules.git//services/webserver-cluster?ref=v0.2"
 
-  source = "git::https://github.com/am-55-code/TF-modules.git?ref=v0.0.1"
-
-  cluster_name = "staging-cluster"
-  region       = var.region
-
-  cluster_sku    = var.cluster_sku
+  cluster_name   = "staging-cluster"
+  cluster_sku    = "Standard_B1s"
   instance_count = "1"
+  region         = "East US"
 
-  os_disk_replication    = var.os_disk_replication
-  state_file_remote_key  = var.remote_key
-  storage_container_name = var.stg_container_name
+  os_disk_replication    = "Standard_LRS"
+  storage_container_name = "tfstate"
+  state_file_remote_key  = "staging-vmss-cluster.tfstate"
+
 }
+

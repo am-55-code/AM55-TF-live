@@ -24,11 +24,16 @@ variable "os_disk_replication" {
   default     = "Standard_LRS"
 }
 
-
-
 variable "remote_key" {
   description = "Name for storage container"
   type        = string
   default     = "staging-cluster"
+
+}
+
+variable "instance_count" {
+  description = "Number of replicas in the cluster"
+  type        = number
+  default     = 1
 
 }
