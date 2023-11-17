@@ -26,12 +26,17 @@ provider "azurerm" {
 }
 
 module "webserver-vmss" {
-  source = "git@github.com:am-55-code/TF-modules.git//services/webserver-cluster?ref=v0.2"
+  source = "git@github.com:am-55-code/TF-modules.git//services/webserver-cluster?ref=v0.3"
 
   cluster_name   = "staging-cluster"
   cluster_sku    = "Standard_B1s"
   instance_count = "1"
   region         = "East US"
+  custom_tags = {
+    Owner = "dev-team"
+    ManagedBy = "TF"
+  }
+
 
   os_disk_replication    = "Standard_LRS"
   storage_container_name = "tfstate"
