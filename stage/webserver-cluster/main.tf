@@ -11,6 +11,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "3.80.0"
     }
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = "~> 2.46.0"
+    }
   }
 }
 provider "azurerm" {
@@ -22,30 +26,37 @@ provider "azurerm" {
       roll_instances_when_required  = true
       scale_to_zero_before_deletion = true
     }
+      
+    key_vault {
+      purge_soft_delete_on_destroy    = true
+      recover_soft_deleted_key_vaults = true
+    }
   }
+}
+
+locals {
+  #cluster_name = "staging-cluster"
+  service-principal = "Terraform-SP-Staging"
 }
 
 module "keyvault" {
-  source = "git@github.com:am-55-code/TF-modules.git//services/key-vault?ref=v0.6"
-  
+  source = "git@github.com:am-55-code/TF-modules.git//services/key-vault?ref=v0.6.4"
+
+  cluster_name = var.cluster_name
 }
 
 module "webserver-vmss" {
-  source = "git@github.com:am-55-code/TF-modules.git//services/webserver-cluster?ref=v0.3"
+  source = "git@github.com:am-55-code/TF-modules.git//services/webserver-cluster?ref=v0.6.9"
 
-  cluster_name   = "staging-cluster"
+  cluster_name   = var.cluster_name
   cluster_sku    = "Standard_B1s"
   instance_count = "1"
   region         = "East US"
-  custom_tags = {
-    Owner = "dev-team"
+  username       = "am55"
+  os_disk_replication = "Standard_LRS"
+   custom_tags = {
+    Owner     = "dev-team"
     ManagedBy = "TF"
   }
-
-
-  os_disk_replication    = "Standard_LRS"
-  storage_container_name = "tfstate"
-  state_file_remote_key  = "staging-vmss-cluster.tfstate"
-
 }
 

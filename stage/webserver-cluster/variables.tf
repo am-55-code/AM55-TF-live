@@ -40,8 +40,8 @@ variable "instance_count" {
 
 variable "custom_tags" {
   description = "Custom tags for instances in the VMSS"
-  type = map(string)
+  type        = map(string)
   default = {
     "name" = "value"
-  }   
+  }
 }
